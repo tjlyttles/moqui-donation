@@ -1,0 +1,111 @@
+<services>
+    <service verb="create" noun="Donation">
+        <in-parameters>
+            <parameter name="firstName" required="true"/>
+            <parameter name="middleName"/>
+            <parameter name="lastName" required="true"/>
+            <parameter name="emailAddress" required="true"><text-email/></parameter>
+            <parameter name="contactNumber"/>
+            <parameter name="address1" required="true"/>
+            <parameter name="unitNumber"/>
+            <parameter name="city" required="true"/>
+            <parameter name="stateProvinceGeoId" required="true"/>
+            <parameter name="postalCode" required="true"/>
+            <!-- Credit card -->
+            <parameter name="donationAmount" required="true"><text-digits/><number-range min="1" max="99999"/></parameter>
+            <parameter name="cardNumber" required="true"><credit-card/></parameter>
+            <parameter name="expireMonth" required="true"/>
+            <parameter name="expireYear" required="true"/>
+            <parameter name="validateSecurityCode" required="true"/>
+        </in-parameters>
+        <out-parameters>
+            <parameter name="partyId" required="true"/>
+        </out-parameters>
+
+        <actions>
+            <script>
+                println "actions hit"
+            </script>
+            <set field="amount" from="donationAmount"/>
+            <set field="expireDate" from="expireMonth + '/' + expireYear"/>
+            <set field="paymentGatewayConfigId" value="StripeDemo"/>
+            <set field="paymentGatewayTypeEnumId" value="StripeDemo"/>
+<!--            <set field="paymentGatewayConfigId" value="AuthorizeDotNetCimDemo"/>-->
+<!--            <set field="paymentGatewayTypeEnumId" value="PgtAuthorizeDotNet"/>-->
+            <!-- Create person/contact -->
+            <service-call name="mantle.party.PartyServices.create#PersonCustomer" in-map="context" out-map="context"/>
+
+            <!--             create credit card-->
+            <set field="firstNameOnAccount" from="firstName"/>
+            <set field="lastNameOnAccount" from="lastName"/>
+            <service-call name="mantle.account.PaymentMethodServices.create#CreditCard" in-map="context" out-map="context"/>
+
+            <!-- create payment -->
+            <set field="fromPartyId" from="partyId"/>
+            <set field="toPartyId" default-value="ORG_ZIZI_CORP"/>
+            <set field="paymentInstrumentEnumId" value="PiCreditCard"/>
+            <set field="paymentTypeEnumId" value="PtDonation"/>
+            <service-call name="mantle.account.PaymentServices.create#Payment" in-map="context" out-map="context"/>
+
+            <!--Stripe Service-->
+<!--            <set field="fromPartyId" from="partyId"/>-->
+<!--            <set field="toPartyId" default-value="ORG_ZIZI_CORP"/>-->
+<!--            <set field="paymentInstrumentEnumId" value="PiCreditCard"/>-->
+<!--            <set field="paymentTypeEnumId" value="PtDonation"/>-->
+<!--            <set field="amount" from="amount"/>-->
+
+<!--            <entity-make-value entity-name="mantle.account.payment.Payment" value-field="payment"/>-->
+<!--            <entity-set value-field="payment" include="nonpk"/>-->
+<!--            <entity-sequenced-id-primary value-field="payment"/>-->
+<!--            <log level="info" message="Should be the payment id: ${payment.paymentId}"/>-->
+<!--            <set field="paymentId" from="payment.paymentId"/>-->
+            <service-call name="Stripe.StripePaymentServices.authorizeAndCapture#Payment" in-map="context"/>
+<!--            <service-call name="Stripe.StripePaymentServices.capture#Payment" in-map="context"/>-->
+
+<!--            <set field="paymentId" from="paymentId"/>-->
+<!--            <set field="vendorPartyId" value="ORG_ZIZI_CORP"/>-->
+<!--            <service-call name="mantle.account.PaymentServices.create#Payment" in-map="context" out-map="context"/>-->
+<!--            <service-call name="mantle.order.OrderServices.create#Order" in-map="context" out-map="context"/>-->
+
+<!--            <set field="itemTypeEnumId" value="ItemDonation"/>-->
+<!--            <set field="quantity" value="1"/>-->
+<!--            <set field="unitListPrice" from="amount"/>-->
+<!--            <service-call name="mantle.order.OrderServices.create#OrderItem" in-map="context" out-map="context"/>-->
+
+<!--            <set field="partTotal" from="amount"/>-->
+<!--            <service-call name="mantle.order.OrderServices.update#OrderPart" in-map="context" out-map="context"/>-->
+
+<!--            <set field="paymentInstrumentEnumId" value="PiCreditCard"/>-->
+<!--            <set field="paymentTypeEnumId" value="PtDonation"/>-->
+<!--            <service-call name="mantle.order.OrderServices.add#OrderPartPayment" in-map="context" out-map="context"/>-->
+
+<!--            <set field="fromPartyId" value="ORG_ZIZI_CORP"/>-->
+<!--            <set field="toPartyId" from="customerPartyId"/>-->
+<!--            <set field="unpaidTotal" value="0.00"/>-->
+<!--            <set field="appliedPaymentsTotal" from="amount"/>-->
+<!--            <set field="invoiceTotal" from="amount"/>-->
+<!--            <set field="description" value="Donation"/>-->
+<!--            <service-call name="mantle.account.InvoiceServices.create#Invoice" in-map="context" out-map="context"/>-->
+
+<!--            &lt;!&ndash; Authorize.net service &ndash;&gt;-->
+<!--            <set field="login" value="62W5Acg7HEqp"/>-->
+<!--            <set field="tranKey" value="242AM3w28k642RbS" />-->
+<!--            <service-call name="AuthorizeDotNet.CimPaymentServices.authorizeAndCapture#Payment" in-map="context" out-map="context"/>-->
+
+
+<!--            Create Order-->
+<!--            <set field="amount" from="amount"/>-->
+<!--            <service-call name="mantle.account.InvoiceServices.create#InvoiceItem" in-map="context" out-map="context"/>-->
+
+<!--            <service-call name="mantle.account.PaymentServices.send#PromisedPayment" in-map="context" out-map="context"/>-->
+
+<!--            <service-call name="mantle.account.PaymentServices.apply#InvoicePayment" in-map="context" out-map="context"/>-->
+
+<!--            <service-call name="mantle.order.OrderServices.place#Order" in-map="context" out-map="context"/>-->
+
+<!--            <service-call name="mantle.order.OrderServices.complete#OrderPart" in-map="context" out-map="context"/>-->
+
+
+        </actions>
+    </service>
+</services>

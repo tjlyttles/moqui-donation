@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-facade-xml type="seed-initial">
+    <moqui.security.ArtifactGroup artifactGroupId="DONO_APP"
+                                  description="Donation App (via root screen)"/>
+    <moqui.security.ArtifactGroupMember artifactGroupId="DONO_APP"
+                                        artifactName="component://DonationPage/screen/DonationPage.xml"
+                                        artifactTypeEnumId="AT_XML_SCREEN" inheritAuthz="Y"/>
+    <moqui.security.ArtifactAuthz artifactAuthzId="DONO_APP"
+                                  userGroupId="ALL_USERS" artifactGroupId="DONO_APP"
+                                  authzTypeEnumId="AUTHZT_ALWAYS" authzActionEnumId="AUTHZA_ALL"/>
+    <artifactGroups artifactGroupId="DONO_APP">
+        <artifacts artifactName="component://DonationPage/screen/DonationPage/DonationForm*" artifactTypeEnumId="AT_XML_SCREEN_TRANS" inheritAuthz="Y" nameIsPattern="Y"/>
+        <artifacts artifactName="component://DonationPage/screen/DonationPage/DonationForm.xml" artifactTypeEnumId="AT_XML_SCREEN" inheritAuthz="Y" nameIsPattern="N"/>
+
+        <artifacts artifactName="DonationServices.create#Donation" artifactTypeEnumId="AT_SERVICE" inheritAuthz="Y" nameIsPattern="N"/>
+    </artifactGroups>
+</entity-facade-xml>

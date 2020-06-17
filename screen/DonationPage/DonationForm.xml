@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<screen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://moqui.org/xsd/xml-screen-2.1.xsd">
+
+    <transition name="placeDonationPayment" require-session-token="false">
+        <service-call name="DonationServices.create#Donation"/>
+        <default-response url="../ThankYouPage"/>
+    </transition>
+
+
+    <widgets>
+
+        <form-single name="PaymentMethodInfo" transition="placeDonationPayment" map="methodInfoFlat">
+            <!-- TODO: support other payment method types (make many fields conditional, etc) -->
+            <field name="donationAmount">
+                <default-field title="How much would you like to donate?">
+                    <text-line size="5"/>
+                </default-field>
+            </field>
+            <field name="partyId"><default-field><hidden/></default-field></field>
+            <field name="fromPartyId"><default-field><hidden/></default-field></field>
+            <field name="toPartyId"><default-field><hidden/></default-field></field>
+            <field name="paymentMethodId"><default-field><hidden/></default-field></field>
+            <field name="paymentMethodTypeEnumId"><default-field><hidden/></default-field></field>
+
+            <!-- Name fields -->
+            <field name="firstName">
+                <default-field title="First Name">
+                    <text-line size="20"/>
+                </default-field>
+            </field>
+            <field name="middleName">
+                <default-field title="M.I.">
+                    <text-line size="1"/>
+                </default-field>
+            </field>
+            <field name="lastName">
+                <default-field title="Last Name">
+                    <text-line size="19"/>
+                </default-field>
+            </field>
+            <field name="emailAddress">
+                <default-field title="Email">
+                    <text-line size="28"/>
+                </default-field>
+            </field>
+            <field name="contactNumber"><default-field  title="Phone" tooltip="Phone Number">
+                <text-line size="20" maxlength="10"/></default-field></field>
+
+
+            <!-- CreditCard fields -->
+            <field name="creditCardTypeEnumId">
+                <default-field title="">
+                    <drop-down><entity-options key="${enumId}" text="${description}">
+                        <entity-find entity-name="moqui.basic.Enumeration">
+                            <econdition field-name="enumTypeId" value="CreditCardType"/>
+                            <order-by field-name="description"/>
+                        </entity-find>
+                    </entity-options></drop-down>
+                </default-field>
+            </field>
+            <field name="cardNumber">
+                <default-field title="" tooltip="Card Number">
+                    <text-line size="16"/></default-field>
+            </field>
+            <field name="validateSecurityCode">
+                <default-field title="" tooltip="Security Code">
+                    <text-line size="4"/></default-field>
+            </field>
+            <field name="expireMonth">
+                <default-field title=""><drop-down no-current-selected-key="${ec.l10n.format(ec.user.nowTimestamp, 'MM')}">
+                    <option key="01"/><option key="02"/><option key="03"/><option key="04"/><option key="05"/>
+                    <option key="06"/><option key="07"/><option key="08"/><option key="09"/><option key="10"/>
+                    <option key="11"/><option key="12"/>
+                </drop-down></default-field>
+            </field>
+            <field name="expireYear">
+                <default-field title=""><drop-down no-current-selected-key="${ec.l10n.format(ec.user.nowTimestamp, 'yyyy')}">
+                    <list-options list="org.moqui.util.StringUtilities.getYearList(10)"/></drop-down></default-field>
+            </field>
+            <field name="paymentGatewayConfigId">
+                <conditional-field title="Payment Gateway" condition="isCreditCard &amp;&amp; paymentGatewayConfigList">
+                    <drop-down allow-empty="true">
+                        <list-options key="${paymentGatewayConfigId}" text="${description}" list="paymentGatewayConfigList"/>
+                    </drop-down>
+                </conditional-field>
+                <default-field><ignored/></default-field>
+            </field>
+
+            <!-- Contact Info fields -->
+
+
+            <field name="address1"><default-field title=""><text-line size="40"/></default-field></field>
+            <field name="unitNumber"><default-field title="Unit"><text-line size="8"/></default-field></field>
+            <field name="address2"><default-field title="Address 2"><text-line size="50"/></default-field></field>
+            <field name="city"><default-field title="" tooltip="City"><text-line size="16"/></default-field></field>
+
+            <field name="stateProvinceGeoId"><default-field title="">
+                <drop-down>
+                    <option key="USA_AL" text="Alabama"/>
+                    <option key="USA_AK" text="Alaska"/>
+                    <option key="USA_AZ" text="Arizona"/>
+                    <option key="USA_AR" text="Arkansas"/>
+                    <option key="USA_CA" text="California"/>
+                    <option key="USA_CO" text="Colorado"/>
+                    <option key="USA_CT" text="Connecticut"/>
+                    <option key="USA_DE" text="Delaware"/>
+                    <option key="USA_DC" text="District Of Columbia"/>
+                    <option key="USA_FL" text="Florida"/>
+                    <option key="USA_GA" text="Georgia"/>
+                    <option key="USA_HI" text="Hawaii"/>
+                    <option key="USA_ID" text="Idaho"/>
+                    <option key="USA_IL" text="Illinois"/>
+                    <option key="USA_IN" text="Indiana"/>
+                    <option key="USA_IA" text="Iowa"/>
+                    <option key="USA_KS" text="Kansas"/>
+                    <option key="USA_KY" text="Kentucky"/>
+                    <option key="USA_LA" text="Louisiana"/>
+                    <option key="USA_ME" text="Maine"/>
+                    <option key="USA_MD" text="Maryland"/>
+                    <option key="USA_MA" text="Massachusetts"/>
+                    <option key="USA_MI" text="Michigan"/>
+                    <option key="USA_MN" text="Minnesota"/>
+                    <option key="USA_MS" text="Mississippi"/>
+                    <option key="USA_MO" text="Missouri"/>
+                    <option key="USA_MT" text="Montana"/>
+                    <option key="USA_NE" text="Nebraska"/>
+                    <option key="USA_NV" text="Nevada"/>
+                    <option key="USA_NH" text="New Hampshire"/>
+                    <option key="USA_NJ" text="New Jersey"/>
+                    <option key="USA_NM" text="New Mexico"/>
+                    <option key="USA_NY" text="New York"/>
+                    <option key="USA_NC" text="North Carolina"/>
+                    <option key="USA_ND" text="North Dakota"/>
+                    <option key="USA_OH" text="Ohio"/>
+                    <option key="USA_OK" text="Oklahoma"/>
+                    <option key="USA_OR" text="Oregon"/>
+                    <option key="USA_PA" text="Pennsylvania"/>
+                    <option key="USA_RI" text="Rhode Island"/>
+                    <option key="USA_SC" text="South Carolina"/>
+                    <option key="USA_SD" text="South Dakota"/>
+                    <option key="USA_TN" text="Tennessee"/>
+                    <option key="USA_TX" text="Texas"/>
+                    <option key="USA_UT" text="Utah"/>
+                    <option key="USA_VT" text="Vermont"/>
+                    <option key="USA_VA" text="Virginia"/>
+                    <option key="USA_WA" text="Washington"/>
+                    <option key="USA_WV" text="West Virginia"/>
+                    <option key="USA_WI" text="Wisconsin"/>
+                    <option key="USA_WY" text="Wyoming"/>
+                    <option key="USA_AS" text="American Samoa"/>
+                    <option key="USA_GU" text="Guam"/>
+                    <option key="USA_MP" text="Northern Mariana Islands"/>
+                    <option key="USA_PR" text="Puerto Rico"/>
+                    <option key="USA_UM" text="United States Minor Outlying Islands"/>
+                    <option key="USA_VI" text="Virgin Islands"/>
+                    <option key="USA_AA" text="Armed Forces Americas"/>
+                    <option key="USA_AP" text="Armed Forces Pacific"/>
+                    <option key="USA_AE" text="Armed Forces Others"/>
+                </drop-down>
+            </default-field></field>
+            <field name="postalCode"><default-field title="" tooltip="Zip/Postal Code"><text-line size="8"/></default-field></field>
+            <field name="postalCodeExt"><default-field title="" tooltip="Zip/Postal Code Extension"><text-line size="4"/></default-field></field>
+
+
+
+
+            <field name="submitButton"><default-field title="Submit Donation">
+                <submit/></default-field></field>
+
+
+            <field-layout>
+
+                <field-row-big title="Name"> <field-ref name="firstName"/>
+                    <field-ref name="middleName"/>
+                    <field-ref name="lastName"/></field-row-big>
+                <field-row-big title="Contact Info"><field-ref name="emailAddress"/><field-ref name="contactNumber"/></field-row-big>
+
+
+                <field-row-big title="Address" ><field-ref name="address1"/><field-ref name="unitNumber"/></field-row-big>
+                <field-row-big title="City/Zip"><field-ref name="city"/>
+                    <field-ref name="postalCode"/></field-row-big>
+                <field-row-big title="State">
+                    <field-ref name="stateProvinceGeoId"/></field-row-big>
+                <field-row-big title="Phone">
+                    </field-row-big>
+                <field-ref name="donationAmount"/>
+                <field-row-big title="Card Type"><field-ref name="creditCardTypeEnumId"/></field-row-big>
+                <field-row-big title="Card Number">
+                    <field-ref name="cardNumber"/><field-ref name="validateSecurityCode"/></field-row-big>
+                <field-row-big title="Expiration Date"><field-ref name="expireMonth"/>
+                    <field-ref name="expireYear"/></field-row-big>
+                <field-ref name="paymentGatewayConfigId"/>
+                <field-ref name="submitButton"/>
+            </field-layout>
+        </form-single>
+
+    </widgets>
+</screen>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component version="1.0.0" name="DonationPage" xsi:noNamespaceSchemaLocation="http://moqui.org/xsd/moqui-conf-2.1.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+    <depends-on version="2.1.2" name="mantle-udm"/>
+
+    <depends-on version="2.1.2" name="mantle-usl"/>
+
+    <depends-on name="AuthorizeDotNet"/>
+
+</component>
